@@ -51,7 +51,7 @@ fn hash(env: &Env, n: u8) -> BytesN<32> {
 }
 
 fn register(c: &Ctx, n: u8) -> u32 {
-    c.client.register_invoice(&c.issuer, &hash(&c.env, n), &FACE, &DUE, &DISCOUNT)
+    c.client.register_invoice(&c.issuer, &c.debtor, &hash(&c.env, n), &FACE, &DUE, &DISCOUNT)
 }
 
 #[test]
@@ -71,11 +71,11 @@ fn registro_ok() {
 fn doble_registro_rechazado() {
     let c = setup();
     register(&c, 1);
-    let r = c.client.try_register_invoice(&c.issuer, &hash(&c.env, 1), &FACE, &DUE, &DISCOUNT);
+    let r = c.client.try_register_invoice(&c.issuer, &c.debtor, &hash(&c.env, 1), &FACE, &DUE, &DISCOUNT);
     assert_eq!(r, Err(Ok(Error::InvoiceAlreadyRegistered)));
     // otro emisor tampoco puede registrar el mismo hash
     let other = Address::generate(&c.env);
-    let r = c.client.try_register_invoice(&other, &hash(&c.env, 1), &FACE, &DUE, &DISCOUNT);
+    let r = c.client.try_register_invoice(&other, &c.debtor, &hash(&c.env, 1), &FACE, &DUE, &DISCOUNT);
     assert_eq!(r, Err(Ok(Error::InvoiceAlreadyRegistered)));
     assert_eq!(c.client.invoice_count(), 1);
 }
@@ -85,15 +85,15 @@ fn registro_valida_parametros() {
     let c = setup();
     let h = hash(&c.env, 9);
     assert_eq!(
-        c.client.try_register_invoice(&c.issuer, &h, &0, &DUE, &DISCOUNT),
+        c.client.try_register_invoice(&c.issuer, &c.debtor, &h, &0, &DUE, &DISCOUNT),
         Err(Ok(Error::InvalidAmount))
     );
     assert_eq!(
-        c.client.try_register_invoice(&c.issuer, &h, &FACE, &DUE, &10_000),
+        c.client.try_register_invoice(&c.issuer, &c.debtor, &h, &FACE, &DUE, &10_000),
         Err(Ok(Error::InvalidDiscount))
     );
     assert_eq!(
-        c.client.try_register_invoice(&c.issuer, &h, &FACE, &1_000, &DISCOUNT),
+        c.client.try_register_invoice(&c.issuer, &c.debtor, &h, &FACE, &1_000, &DISCOUNT),
         Err(Ok(Error::InvalidDueDate))
     );
 }
@@ -225,7 +225,7 @@ fn registro_sin_ninguna_auth_rechazado() {
     let (a, o, t) = (Address::generate(&env), Address::generate(&env), Address::generate(&env));
     client.initialize(&a, &o, &t);
     let issuer = Address::generate(&env);
-    let r = client.try_register_invoice(&issuer, &hash(&env, 1), &FACE, &DUE, &DISCOUNT);
+    let r = client.try_register_invoice(&issuer, &Address::generate(&env), &hash(&env, 1), &FACE, &DUE, &DISCOUNT);
     assert!(r.is_err());
 }
 
@@ -239,6 +239,7 @@ fn registro_sin_auth_del_oraculo_rechazado() {
         (Address::generate(&env), Address::generate(&env), Address::generate(&env));
     client.initialize(&admin, &oracle, &tok);
     let issuer = Address::generate(&env);
+    let debtor = Address::generate(&env);
     let h = hash(&env, 1);
 
     // Solo firma el emisor
@@ -248,11 +249,11 @@ fn registro_sin_auth_del_oraculo_rechazado() {
             invoke: &MockAuthInvoke {
                 contract: &id,
                 fn_name: "register_invoice",
-                args: (&issuer, &h, FACE, DUE, DISCOUNT).into_val(&env),
+                args: (&issuer, &debtor, &h, FACE, DUE, DISCOUNT).into_val(&env),
                 sub_invokes: &[],
             },
         }])
-        .try_register_invoice(&issuer, &h, &FACE, &DUE, &DISCOUNT);
+        .try_register_invoice(&issuer, &debtor, &h, &FACE, &DUE, &DISCOUNT);
     assert!(r.is_err());
 }
 
@@ -266,6 +267,7 @@ fn registro_sin_auth_del_emisor_rechazado() {
         (Address::generate(&env), Address::generate(&env), Address::generate(&env));
     client.initialize(&admin, &oracle, &tok);
     let issuer = Address::generate(&env);
+    let debtor = Address::generate(&env);
     let h = hash(&env, 1);
 
     // Solo firma el oráculo
@@ -275,11 +277,11 @@ fn registro_sin_auth_del_emisor_rechazado() {
             invoke: &MockAuthInvoke {
                 contract: &id,
                 fn_name: "register_invoice",
-                args: (&issuer, &h, FACE, DUE, DISCOUNT).into_val(&env),
+                args: (&issuer, &debtor, &h, FACE, DUE, DISCOUNT).into_val(&env),
                 sub_invokes: &[],
             },
         }])
-        .try_register_invoice(&issuer, &h, &FACE, &DUE, &DISCOUNT);
+        .try_register_invoice(&issuer, &debtor, &h, &FACE, &DUE, &DISCOUNT);
     assert!(r.is_err());
 }
 
@@ -293,9 +295,10 @@ fn registro_con_ambas_auths_ok() {
         (Address::generate(&env), Address::generate(&env), Address::generate(&env));
     client.initialize(&admin, &oracle, &tok);
     let issuer = Address::generate(&env);
+    let debtor = Address::generate(&env);
     let h = hash(&env, 1);
     let args: soroban_sdk::Vec<soroban_sdk::Val> =
-        (&issuer, &h, FACE, DUE, DISCOUNT).into_val(&env);
+        (&issuer, &debtor, &h, FACE, DUE, DISCOUNT).into_val(&env);
     let invoke = MockAuthInvoke {
         contract: &id,
         fn_name: "register_invoice",
@@ -307,7 +310,7 @@ fn registro_con_ambas_auths_ok() {
             MockAuth { address: &issuer, invoke: &invoke },
             MockAuth { address: &oracle, invoke: &invoke },
         ])
-        .try_register_invoice(&issuer, &h, &FACE, &DUE, &DISCOUNT);
+        .try_register_invoice(&issuer, &debtor, &h, &FACE, &DUE, &DISCOUNT);
     assert!(r.is_ok());
 }
 
@@ -339,4 +342,31 @@ fn emite_eventos() {
     let c = setup();
     register(&c, 1);
     assert_eq!(c.env.events().all().events().len(), 1);
+}
+
+// ---------- Deudor atado al registro ----------
+
+#[test]
+fn repay_por_tercero_rechazado() {
+    let c = setup();
+    let id = register(&c, 1);
+    c.client.fund(&id, &c.investor);
+    let intruso = Address::generate(&c.env);
+    StellarAssetClient::new(&c.env, &c.token.address).mint(&intruso, &FACE);
+    assert_eq!(c.client.try_repay(&id, &intruso), Err(Ok(Error::NotDebtor)));
+    // tampoco el emisor ni el inversionista pueden "pagar" por el deudor
+    assert_eq!(c.client.try_repay(&id, &c.issuer), Err(Ok(Error::NotDebtor)));
+    assert_eq!(c.client.try_repay(&id, &c.investor), Err(Ok(Error::NotDebtor)));
+    assert_eq!(c.client.get_invoice(&id).status, Status::Funded);
+    assert_eq!(c.token.balance(&intruso), FACE);
+    // el deudor registrado sí puede
+    c.client.repay(&id, &c.debtor);
+    assert_eq!(c.client.get_invoice(&id).status, Status::Repaid);
+}
+
+#[test]
+fn deudor_queda_registrado() {
+    let c = setup();
+    let id = register(&c, 1);
+    assert_eq!(c.client.get_invoice(&id).debtor, c.debtor);
 }

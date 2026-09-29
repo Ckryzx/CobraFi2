@@ -27,9 +27,9 @@ Estados: `Registered -> Funded -> Repaid` (o `Defaulted`).
 | Función | Descripción |
 |---|---|
 | `initialize(admin, oracle, token)` | Configuración inicial (una sola vez) |
-| `register_invoice(issuer, hash, face_value, due_date, discount_bps)` | Requiere auth de emisor **y** oráculo. Rechaza hash repetido |
+| `register_invoice(issuer, debtor, hash, face_value, due_date, discount_bps)` | Requiere auth de emisor **y** oráculo. Rechaza hash repetido. Ata la dirección del deudor |
 | `fund(invoice_id, investor)` | Inversionista paga `face * (10000 - bps)/10000` al emisor |
-| `repay(invoice_id, payer)` | Pagador transfiere `face_value` al inversionista |
+| `repay(invoice_id, payer)` | Solo el deudor registrado (`NotDebtor` si no) transfiere `face_value` al inversionista |
 | `mark_default(invoice_id)` | Solo si `timestamp > due_date` y la factura está `Funded` |
 | `get_invoice`, `get_invoice_id_by_hash`, `list_open_invoices(start_id, limit)`, `invoice_count` | Consultas (listado paginado, máx. 50) |
 
@@ -38,14 +38,14 @@ Eventos: `invoice_registered`, `invoice_funded`, `invoice_repaid`, `invoice_defa
 Notas de diseño:
 - On-chain solo hay hash del DTE y montos, nunca RUT ni razón social.
 - `fund` no acepta facturas vencidas.
-- `repay` no verifica que `payer` sea el deudor real de la factura (el MVP no lo exige); el pagador es quien firma.
-  Queda como mejora: atar el deudor a un hash en el registro.
+- El deudor queda atado al registro: el oráculo atestigua qué dirección corresponde al RUT receptor del DTE
+  (en la demo, el backend lo mapea). Solo esa dirección puede pagar; nadie más puede cerrar la factura.
 
 ## Correr local
 Requisitos: Rust, target `wasm32v1-none`, [stellar-cli](https://developers.stellar.org/docs/tools/cli) >= 25.2.0.
 
 ```bash
-cargo test -p invoice-factoring      # 21 tests
+cargo test -p invoice-factoring      # 23 tests
 stellar contract build               # genera el .wasm
 ```
 

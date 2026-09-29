@@ -15,6 +15,7 @@ pub enum Error {
     NotYetDue = 9,
     InvoiceExpired = 10,
     MathOverflow = 11,
+    NotDebtor = 12,
 }
 
 #[contracttype]
@@ -31,6 +32,7 @@ pub enum Status {
 pub struct Invoice {
     pub id: u32,
     pub issuer: Address,
+    pub debtor: Address,
     pub invoice_hash: BytesN<32>,
     pub face_value: i128,
     pub due_date: u64,

@@ -5,6 +5,7 @@ pub struct InvoiceRegistered {
     #[topic]
     pub invoice_id: u32,
     pub issuer: Address,
+    pub debtor: Address,
     pub invoice_hash: BytesN<32>,
     pub face_value: i128,
     pub due_date: u64,

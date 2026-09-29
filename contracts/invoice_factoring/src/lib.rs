@@ -39,9 +39,11 @@ impl InvoiceFactoring {
 
     /// Registra una factura atestiguada por el oráculo. Rechaza hashes repetidos
     /// (anti doble-cesión). Requiere la autorización del emisor y del oráculo.
+    /// `debtor` es la dirección que podrá pagar la factura (el oráculo la atestigua).
     pub fn register_invoice(
         env: Env,
         issuer: Address,
+        debtor: Address,
         invoice_hash: BytesN<32>,
         face_value: i128,
         due_date: u64,
@@ -73,6 +75,7 @@ impl InvoiceFactoring {
         let invoice = Invoice {
             id,
             issuer: issuer.clone(),
+            debtor: debtor.clone(),
             invoice_hash: invoice_hash.clone(),
             face_value,
             due_date,
@@ -85,7 +88,7 @@ impl InvoiceFactoring {
         bump_persistent(&env, &hash_key);
         bump_instance(&env);
 
-        InvoiceRegistered { invoice_id: id, issuer, invoice_hash, face_value, due_date, discount_bps }
+        InvoiceRegistered { invoice_id: id, issuer, debtor, invoice_hash, face_value, due_date, discount_bps }
             .publish(&env);
         Ok(id)
     }
@@ -113,10 +116,14 @@ impl InvoiceFactoring {
         Ok(())
     }
 
-    /// El pagador (deudor) transfiere `face_value` al inversionista.
+    /// El deudor registrado transfiere `face_value` al inversionista.
+    /// Rechaza a cualquier otro pagador con `NotDebtor`.
     pub fn repay(env: Env, invoice_id: u32, payer: Address) -> Result<(), Error> {
         payer.require_auth();
         let mut invoice = load_invoice(&env, invoice_id)?;
+        if payer != invoice.debtor {
+            return Err(Error::NotDebtor);
+        }
         if invoice.status != Status::Funded {
             return Err(Error::InvalidStatus);
         }
