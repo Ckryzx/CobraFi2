@@ -49,8 +49,16 @@ cargo test -p invoice-factoring      # 23 tests
 stellar contract build               # genera el .wasm
 ```
 
+## Despliegue en testnet
+```bash
+./scripts/setup-testnet.sh
+```
+Crea las cuentas demo (emisor del token, admin, oráculo, pyme, inversionista, deudor) con Friendbot, el token de prueba
+`USDCt` con su SAC, despliega e inicializa el contrato y escribe todo en `.env` (ignorado por git).
+Requiere `stellar-cli` >= 25.2.0 y salida a `soroban-testnet.stellar.org` / `friendbot.stellar.org`.
+
 ## Direcciones en testnet
-_Pendiente (Día 2)._
+_Pendiente: se completan al correr el script de despliegue._
 
 ## Roadmap
 Validación real contra el SII, validadores de otros países (México CFDI, Brasil NF-e), passkeys,
