@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DTE de EJEMPLO con datos ficticios. No corresponde a documentos reales. -->
+<DTE version="1.0">
+  <Documento ID="F310T33">
+    <Encabezado>
+      <IdDoc>
+        <TipoDTE>33</TipoDTE>
+        <Folio>310</Folio>
+        <FchEmis>2026-09-25</FchEmis>
+        <FmaPago>2</FmaPago>
+        <FchVenc>2027-02-23</FchVenc>
+      </IdDoc>
+      <Emisor>
+        <RUTEmisor>77.654.321-7</RUTEmisor>
+        <RznSoc>Viñedos del Maipo SpA</RznSoc>
+        <GiroEmis>Giro ficticio</GiroEmis>
+      </Emisor>
+      <Receptor>
+        <RUTRecep>96.500.100-K</RUTRecep>
+        <RznSocRecep>Retail Grande S.A. (ficticio)</RznSocRecep>
+      </Receptor>
+      <Totales>
+        <MntNeto>7500000</MntNeto>
+        <TasaIVA>19</TasaIVA>
+        <IVA>1425000</IVA>
+        <MntTotal>8925000</MntTotal>
+      </Totales>
+    </Encabezado>
+    <Detalle>
+      <NroLinDet>1</NroLinDet>
+      <NmbItem>Servicio de ejemplo</NmbItem>
+      <QtyItem>1</QtyItem>
+      <PrcItem>7500000</PrcItem>
+      <MontoItem>7500000</MontoItem>
+    </Detalle>
+  </Documento>
+</DTE>

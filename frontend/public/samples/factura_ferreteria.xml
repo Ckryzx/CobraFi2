@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DTE de EJEMPLO con datos ficticios. No corresponde a documentos reales. -->
+<DTE version="1.0">
+  <Documento ID="F88T33">
+    <Encabezado>
+      <IdDoc>
+        <TipoDTE>33</TipoDTE>
+        <Folio>88</Folio>
+        <FchEmis>2026-09-15</FchEmis>
+        <FmaPago>2</FmaPago>
+        <FchVenc>2027-01-14</FchVenc>
+      </IdDoc>
+      <Emisor>
+        <RUTEmisor>77.123.456-9</RUTEmisor>
+        <RznSoc>Ferretería Cordillera Ltda.</RznSoc>
+        <GiroEmis>Giro ficticio</GiroEmis>
+      </Emisor>
+      <Receptor>
+        <RUTRecep>96.500.100-K</RUTRecep>
+        <RznSocRecep>Retail Grande S.A. (ficticio)</RznSocRecep>
+      </Receptor>
+      <Totales>
+        <MntNeto>10000000</MntNeto>
+        <TasaIVA>19</TasaIVA>
+        <IVA>1900000</IVA>
+        <MntTotal>11900000</MntTotal>
+      </Totales>
+    </Encabezado>
+    <Detalle>
+      <NroLinDet>1</NroLinDet>
+      <NmbItem>Servicio de ejemplo</NmbItem>
+      <QtyItem>1</QtyItem>
+      <PrcItem>10000000</PrcItem>
+      <MontoItem>10000000</MontoItem>
+    </Detalle>
+  </Documento>
+</DTE>
