@@ -72,15 +72,10 @@ export async function fetchBalance(cfg: AppConfig, address: string): Promise<big
 
 const EVENT_NAMES = new Set(["invoice_registered", "invoice_funded", "invoice_repaid", "invoice_defaulted"]);
 
-export async function fetchEvents(cfg: AppConfig): Promise<ContractEvent[]> {
-  const server = makeServer(cfg);
-  const latest = await server.getLatestLedger();
-  const startLedger = Math.max(latest.sequence - 100_000, 1); // ~5,7 días, dentro de la retención del RPC
-  const res = await server.getEvents({
-    startLedger,
-    filters: [{ type: "contract", contractIds: [cfg.contractId] }],
-    limit: 200,
-  });
+/** Ledgers hacia atrás en la primera consulta (~3,5 días; el RPC retiene ~7). */
+const EVENTS_WINDOW = 60_000;
+
+function decodeEvents(res: rpc.Api.GetEventsResponse): ContractEvent[] {
   const out: ContractEvent[] = [];
   for (const ev of res.events) {
     const topics = ev.topic.map((t) => scValToNative(t));
@@ -95,6 +90,32 @@ export async function fetchEvents(cfg: AppConfig): Promise<ContractEvent[]> {
     });
   }
   return out;
+}
+
+/**
+ * Lee los eventos del contrato. El RPC solo escanea ~10.000 ledgers por consulta (y responde vacío sin error
+ * si los eventos están más lejos), así que se pagina con cursor hasta llegar al final. Devuelve el cursor para
+ * que la siguiente llamada solo traiga lo nuevo.
+ */
+export async function fetchEvents(cfg: AppConfig, cursor?: string): Promise<{ events: ContractEvent[]; cursor: string }> {
+  const server = makeServer(cfg);
+  const filters: rpc.Api.EventFilter[] = [{ type: "contract", contractIds: [cfg.contractId] }];
+  let first: rpc.Api.GetEventsResponse;
+  if (cursor) {
+    first = await server.getEvents({ cursor, filters, limit: 200 });
+  } else {
+    const latest = await server.getLatestLedger();
+    first = await server.getEvents({ startLedger: Math.max(latest.sequence - EVENTS_WINDOW, 1), filters, limit: 200 });
+  }
+  const events = decodeEvents(first);
+  let cur = first.cursor;
+  for (let i = 0; i < 40; i++) {
+    const next = await server.getEvents({ cursor: cur, filters, limit: 200 });
+    events.push(...decodeEvents(next));
+    if (next.cursor === cur) break; // sin más ledgers por recorrer
+    cur = next.cursor;
+  }
+  return { events, cursor: cur };
 }
 
 /** Espera a que la red confirme la tx. */
@@ -118,6 +139,9 @@ const CONTRACT_ERRORS: Record<number, string> = {
 
 export function friendlyError(e: unknown): string {
   const msg = e instanceof Error ? e.message : String(e);
+  // El token (SAC) usa códigos de error propios (#10 = saldo insuficiente): no confundirlos con los del contrato.
+  if (/balance is not within the allowed range/i.test(msg)) return "Saldo insuficiente de USDCt";
+  if (/trustline entry is missing/i.test(msg)) return "Tu cuenta necesita una trustline del token (USDCt)";
   const m = /Error\(Contract, #(\d+)\)/.exec(msg);
   if (m) return CONTRACT_ERRORS[Number(m[1])] ?? `Error del contrato #${m[1]}`;
   if (/trustline|op_no_trust|trust/i.test(msg)) return "Tu cuenta necesita una trustline del token (USDCt)";

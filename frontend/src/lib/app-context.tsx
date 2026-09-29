@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { getConfig } from "./api";
 import { fetchBalance, fetchEvents, fetchInvoices } from "./contract";
 import { connectFreighter, signWithFreighter } from "./wallet";
@@ -40,6 +40,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [events, setEvents] = useState<ContractEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [dataError, setDataError] = useState<string | null>(null);
+  const eventCursor = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     getConfig().then(setConfig).catch((e: Error) => setConfigError(e.message));
@@ -56,11 +57,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       const [inv, evs, bal] = await Promise.all([
         fetchInvoices(config),
-        fetchEvents(config).catch(() => [] as ContractEvent[]), // los eventos son un extra: no rompen la vista
+        fetchEvents(config, eventCursor.current).catch(() => null), // los eventos son un extra: no rompen la vista
         address ? fetchBalance(config, address).catch(() => null) : Promise.resolve(null),
       ]);
       setInvoices(inv);
-      setEvents(evs);
+      if (evs) {
+        eventCursor.current = evs.cursor;
+        // acumula lo nuevo sin duplicar
+        setEvents((old) => {
+          const seen = new Set(old.map((e) => `${e.txHash}-${e.name}-${e.invoiceId}`));
+          return [...old, ...evs.events.filter((e) => !seen.has(`${e.txHash}-${e.name}-${e.invoiceId}`))];
+        });
+      }
       setBalance(bal);
     } catch (e) {
       setDataError(e instanceof Error ? e.message : String(e));

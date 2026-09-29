@@ -8,6 +8,7 @@ import {
   Keypair,
   Networks,
   Operation,
+  SorobanDataBuilder,
   StrKey,
   Transaction,
   TransactionBuilder,
@@ -53,7 +54,8 @@ function buildAssembled(auth: xdr.SorobanAuthorizationEntry[], fnName = "registe
     .setTimeout(300)
     .build();
   const func = (plain.operations[0] as Operation.InvokeHostFunction).func;
-  return TransactionBuilder.cloneFrom(plain)
+  const data = new SorobanDataBuilder().setResourceFee(5000n).build();
+  return TransactionBuilder.cloneFrom(plain, { sorobanData: data })
     .clearOperations()
     .addOperation(Operation.invokeHostFunction({ func, auth }))
     .build();
@@ -71,6 +73,10 @@ describe("attachOracleAuth", () => {
     expect(creds.value.signature.type).toBe("scvVec"); // firmada
     expect(out.fee).toBe(tx.fee);
     expect(out.source).toBe(issuerKp.publicKey());
+    // los datos de recursos Soroban (footprint + fee de recursos) deben sobrevivir
+    const ext = out.toEnvelope().type === "envelopeTypeTx" ? (out.toEnvelope() as any).value.tx.ext : undefined;
+    expect(ext?.type).toBe("sorobanData");
+    expect(ext.value.resourceFee.toString()).toBe("5000");
   });
 
   it("falla si no hay autorización del oráculo", async () => {

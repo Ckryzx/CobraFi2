@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useApp } from "@/lib/app-context";
 import { friendlyError, invokeAsSource } from "@/lib/contract";
-import { explorerTx } from "@/lib/format";
+import { explorerTx, formatUsdct, fundingAmount } from "@/lib/format";
 import { InvoiceCard } from "@/components/InvoiceCard";
 import { Alert, Button, ConnectPrompt } from "@/components/ui";
 
 export default function InversionistaPage() {
-  const { address, connect, config, invoices, refresh, sign, loading, dataError } = useApp();
+  const { address, balance, connect, config, invoices, refresh, sign, loading, dataError } = useApp();
   const [busyId, setBusyId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [okTx, setOkTx] = useState<string | null>(null);
@@ -21,6 +21,14 @@ export default function InversionistaPage() {
     if (!address || !config) return;
     setError(null);
     setOkTx(null);
+    const inv = invoices.find((i) => i.id === id);
+    if (inv && balance !== null) {
+      const price = fundingAmount(inv.faceValue, inv.discountBps);
+      if (balance < price) {
+        setError(`Saldo insuficiente: necesitas ${formatUsdct(price, config.assetCode)} y tienes ${formatUsdct(balance, config.assetCode)}.`);
+        return;
+      }
+    }
     setBusyId(id);
     try {
       const hash = await invokeAsSource(config, address, "fund", id, sign);

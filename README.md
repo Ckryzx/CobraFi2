@@ -86,19 +86,25 @@ Flujo de registro: la pyme sube el XML → `prepare` → firma con su wallet →
 
 ## Despliegue en testnet
 ```bash
-./scripts/setup-testnet.sh
+./scripts/setup-testnet.sh          # compila, crea cuentas demo, token USDCt (+SAC), despliega e inicializa
+cd backend && npm run seed          # registra los 4 XML de ejemplo (flujo real: oráculo + emisor)
+npm run faucet -- INVESTOR 40000    # recarga USDCt a una cuenta demo (PYME | INVESTOR | DEBTOR)
+npm run e2e:testnet                 # prueba el ciclo completo contra la red (fund, repay, errores, eventos)
 ```
-Crea las cuentas demo (emisor del token, admin, oráculo, pyme, inversionista, deudor) con Friendbot, el token de prueba
-`USDCt` con su SAC, despliega e inicializa el contrato y escribe todo en `.env` (ignorado por git).
-Requiere `stellar-cli` >= 25.2.0 y salida a `soroban-testnet.stellar.org` / `friendbot.stellar.org`.
+- `setup-testnet.sh` usa el SDK de JavaScript (no el CLI, que en algunos entornos con proxy no sale a la red) y escribe
+  todo en `.env` (ignorado por git; solo claves de testnet). Requiere `stellar-cli` >= 25.2.0 únicamente para compilar el wasm.
+- Reejecutarlo reutiliza cuentas y token, y despliega un contrato nuevo (marketplace vacío: vuelve a correr `npm run seed`).
+- Detrás de un proxy (`HTTPS_PROXY`), Node lo respeta con `NODE_USE_ENV_PROXY=1` (el `.sh` ya lo activa; para los `npm run` ponlo tú).
+- Saldos iniciales: inversionista 50.000 USDCt, deudor 50.000, pyme 10.
 
 ## Direcciones en testnet
-_Pendiente: se completan al correr el script de despliegue._
+Desplegado en Stellar **Testnet** (la red de pruebas puede reiniciarse; si eso pasa, se repite `./scripts/setup-testnet.sh`).
 
 | Elemento | Dirección |
 |---|---|
-| Contrato `invoice_factoring` | _por completar_ |
-| Token USDCt (SAC) | _por completar_ |
+| Contrato `invoice_factoring` | [`CC6HGJX6VYIWJ52SWVWJV62NBL2IEARRYNMWHBSUS55YCGUQYH2TBKYS`](https://stellar.expert/explorer/testnet/contract/CC6HGJX6VYIWJ52SWVWJV62NBL2IEARRYNMWHBSUS55YCGUQYH2TBKYS) |
+| Token USDCt (SAC) | [`CD6L6N2GFYYMYBEFQ54TK6GWEXNOUNI5432NJVFO5PGQVODOPMR6HP5T`](https://stellar.expert/explorer/testnet/contract/CD6L6N2GFYYMYBEFQ54TK6GWEXNOUNI5432NJVFO5PGQVODOPMR6HP5T) |
+| Emisor del token USDCt | [`GAAKKEWKENJGFZXTU3MJQPVPB72IN2XFWETK7S6JSGWITBVTGR32SVVO`](https://stellar.expert/explorer/testnet/account/GAAKKEWKENJGFZXTU3MJQPVPB72IN2XFWETK7S6JSGWITBVTGR32SVVO) |
 
 ## Documentación
 - [Arquitectura y decisiones de diseño](docs/architecture.md)
@@ -108,9 +114,9 @@ _Pendiente: se completan al correr el script de despliegue._
 | Pieza | Estado |
 |---|---|
 | Contrato Soroban | ✅ 23 tests |
-| Backend / oráculo | ✅ 30 tests; API probada en local |
-| Frontend | ✅ compila; probado en Chromium con RPC simulado (decodificación de datos del contrato incluida) |
-| Despliegue y flujo completo en testnet | ⏳ pendiente de ejecutar `./scripts/setup-testnet.sh` con salida a la red |
+| Backend / oráculo | ✅ 30 tests; registro real (2 autorizaciones) verificado en testnet |
+| Frontend | ✅ compila; probado en Chromium leyendo la testnet real (facturas, saldos, eventos y línea de tiempo). Falta probar la firma con la extensión Freighter |
+| Despliegue y ciclo completo en testnet | ✅ registrar → financiar → pagar verificado con saldos exactos; doble registro, doble fund, pagador ajeno y mora anticipada rechazados |
 
 ## Roadmap
 Validación real contra el SII, validadores de otros países (México CFDI, Brasil NF-e), passkeys,

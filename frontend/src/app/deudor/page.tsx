@@ -15,7 +15,8 @@ export default function DeudorPage() {
 
   const mine = invoices.filter((i) => i.debtor === address);
   const toPay = mine.filter((i) => i.status === "Funded");
-  const history = mine.filter((i) => i.status !== "Funded");
+  const waiting = mine.filter((i) => i.status === "Registered");
+  const history = mine.filter((i) => i.status === "Repaid" || i.status === "Defaulted");
 
   async function pay(id: number) {
     if (!address || !config) return;
@@ -72,6 +73,15 @@ export default function DeudorPage() {
               ))
             )}
           </section>
+          {waiting.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="text-lg font-semibold">Registradas, aún sin financiar ({waiting.length})</h2>
+              <p className="text-sm text-slate-500">Todavía no hay nada que pagar: se habilita cuando un inversionista las financie.</p>
+              {waiting.map((i) => (
+                <InvoiceCard key={i.id} invoice={i} />
+              ))}
+            </section>
+          )}
           {history.length > 0 && (
             <section className="space-y-3">
               <h2 className="text-lg font-semibold">Historial</h2>

@@ -47,6 +47,10 @@ const CONTRACT_ERRORS: Record<number, string> = {
 export class OracleError extends Error {}
 
 export function explainError(raw: string): string {
+  // El token (SAC) también usa códigos de error pequeños (p. ej. #10 = saldo insuficiente): no confundirlos con los nuestros.
+  if (/balance is not within the allowed range|trustline entry is missing/i.test(raw)) {
+    return "Saldo insuficiente de USDCt o falta la trustline del token";
+  }
   const m = /Error\(Contract, #(\d+)\)/.exec(raw);
   if (m) return CONTRACT_ERRORS[Number(m[1])] ?? `Error del contrato #${m[1]}`;
   return raw;
@@ -83,7 +87,12 @@ export async function attachOracleAuth(
   if (!oracleSigned) {
     throw new OracleError("La simulación no pidió autorización del oráculo (¿contrato mal configurado?)");
   }
-  return TransactionBuilder.cloneFrom(assembled)
+  // cloneFrom del SDK no conserva los datos de recursos Soroban (footprint, fee): hay que pasarlos.
+  const envelope = assembled.toEnvelope();
+  const ext = envelope.type === "envelopeTypeTx" ? envelope.value.tx.ext : undefined;
+  const sorobanData = ext?.type === "sorobanData" ? ext.value : undefined;
+  if (!sorobanData) throw new OracleError("La transacción preparada no incluye datos de recursos de Soroban");
+  return TransactionBuilder.cloneFrom(assembled, { sorobanData })
     .clearOperations()
     .addOperation(Operation.invokeHostFunction({ func: op.func, auth }))
     .build();

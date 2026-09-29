@@ -8,7 +8,10 @@
     "start": "tsx src/server.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "seed": "tsx scripts/seed-demo.ts"
+    "seed": "tsx scripts/seed-demo.ts",
+    "setup": "tsx scripts/setup-testnet.ts",
+    "e2e:testnet": "tsx scripts/e2e-testnet.ts",
+    "faucet": "tsx scripts/faucet.ts"
   },
   "dependencies": {
     "@stellar/stellar-sdk": "^17.2.0",
