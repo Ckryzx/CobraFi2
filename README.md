@@ -16,9 +16,9 @@ el pago al vencimiento vía smart contract.
 ```
 contracts/invoice_factoring   Smart contract Soroban (Rust)
 backend                       API Node/TS: parser DTE + oráculo         (listo, ver abajo)
-frontend                      Next.js + Tailwind                        (Día 4)
-scripts                       Deploy testnet, token de prueba, demo     (Día 2)
-docs                          Diagramas y guion de demo
+frontend                      Next.js + Tailwind (3 vistas por rol)
+scripts                       Deploy a testnet, token de prueba, cuentas demo
+docs                          Arquitectura (diagramas) y guion de demo
 ```
 
 ## Contrato
@@ -49,11 +49,24 @@ cargo test -p invoice-factoring      # 23 tests
 stellar contract build               # genera el .wasm
 ```
 
+## Frontend
+```bash
+cd frontend && npm install
+npm run dev         # http://localhost:3000  (NEXT_PUBLIC_BACKEND_URL, por defecto http://localhost:8787)
+npm test            # formato y cálculo de rendimiento
+```
+Tres vistas por rol, con conexión a **Freighter** (red Testnet):
+- **Pyme:** sube el XML → datos extraídos → elige el descuento → registra (firma con Freighter) → sigue el estado de sus facturas.
+- **Inversionista:** marketplace de facturas abiertas (monto, vencimiento, precio, rendimiento anualizado) → financia.
+- **Deudor:** facturas por pagar → paga.
+Cada factura muestra su línea de tiempo con los eventos del contrato y enlaces a stellar.expert. Montos en USDCt con su equivalente aproximado en CLP.
+
 ## Backend (oráculo)
 ```bash
 cd backend && npm install
 npm test            # 30 tests
 npm run dev         # lee ../.env (lo genera scripts/setup-testnet.sh)
+npm run seed        # precarga el marketplace con los 4 XML de ejemplo (requiere testnet)
 ```
 | Endpoint | Qué hace |
 |---|---|
@@ -81,6 +94,23 @@ Requiere `stellar-cli` >= 25.2.0 y salida a `soroban-testnet.stellar.org` / `fri
 
 ## Direcciones en testnet
 _Pendiente: se completan al correr el script de despliegue._
+
+| Elemento | Dirección |
+|---|---|
+| Contrato `invoice_factoring` | _por completar_ |
+| Token USDCt (SAC) | _por completar_ |
+
+## Documentación
+- [Arquitectura y decisiones de diseño](docs/architecture.md)
+- [Guion de demo](docs/demo-script.md)
+
+## Estado del proyecto
+| Pieza | Estado |
+|---|---|
+| Contrato Soroban | ✅ 23 tests |
+| Backend / oráculo | ✅ 30 tests; API probada en local |
+| Frontend | ✅ compila; probado en Chromium con RPC simulado (decodificación de datos del contrato incluida) |
+| Despliegue y flujo completo en testnet | ⏳ pendiente de ejecutar `./scripts/setup-testnet.sh` con salida a la red |
 
 ## Roadmap
 Validación real contra el SII, validadores de otros países (México CFDI, Brasil NF-e), passkeys,
