@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DTE de EJEMPLO con datos ficticios. No corresponde a documentos reales. -->
+<DTE version="1.0">
+  <Documento ID="F1523T33">
+    <Encabezado>
+      <IdDoc>
+        <TipoDTE>33</TipoDTE>
+        <Folio>1523</Folio>
+        <FchEmis>2026-09-10</FchEmis>
+        <FmaPago>2</FmaPago>
+        <FchVenc>2026-12-10</FchVenc>
+      </IdDoc>
+      <Emisor>
+        <RUTEmisor>76.543.210-3</RUTEmisor>
+        <RznSoc>Panadería Los Andes SpA</RznSoc>
+        <GiroEmis>Giro ficticio</GiroEmis>
+      </Emisor>
+      <Receptor>
+        <RUTRecep>96.500.100-K</RUTRecep>
+        <RznSocRecep>Retail Grande S.A. (ficticio)</RznSocRecep>
+      </Receptor>
+      <Totales>
+        <MntNeto>4000000</MntNeto>
+        <TasaIVA>19</TasaIVA>
+        <IVA>760000</IVA>
+        <MntTotal>4760000</MntTotal>
+      </Totales>
+    </Encabezado>
+    <Detalle>
+      <NroLinDet>1</NroLinDet>
+      <NmbItem>Servicio de ejemplo</NmbItem>
+      <QtyItem>1</QtyItem>
+      <PrcItem>4000000</PrcItem>
+      <MontoItem>4000000</MontoItem>
+    </Detalle>
+  </Documento>
+</DTE>

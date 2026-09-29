@@ -15,7 +15,7 @@ el pago al vencimiento vía smart contract.
 ## Estructura
 ```
 contracts/invoice_factoring   Smart contract Soroban (Rust)
-backend                       API Node/TS: parser DTE + oráculo         (Día 3)
+backend                       API Node/TS: parser DTE + oráculo         (listo, ver abajo)
 frontend                      Next.js + Tailwind                        (Día 4)
 scripts                       Deploy testnet, token de prueba, demo     (Día 2)
 docs                          Diagramas y guion de demo
@@ -48,6 +48,28 @@ Requisitos: Rust, target `wasm32v1-none`, [stellar-cli](https://developers.stell
 cargo test -p invoice-factoring      # 23 tests
 stellar contract build               # genera el .wasm
 ```
+
+## Backend (oráculo)
+```bash
+cd backend && npm install
+npm test            # 30 tests
+npm run dev         # lee ../.env (lo genera scripts/setup-testnet.sh)
+```
+| Endpoint | Qué hace |
+|---|---|
+| `POST /invoices/parse` `{xml}` | Extrae RUT emisor/receptor, tipo, folio, monto y fechas del DTE (tipo 33); calcula `invoice_hash = sha256(rutEmisor\|tipoDTE\|folio)`; valida y estima el monto en USDCt |
+| `POST /invoices/prepare` `{xml, issuer, discountBps}` | Si la factura es válida, arma la tx `register_invoice` (fuente = emisor) con la autorización del oráculo ya firmada y devuelve el XDR |
+| `POST /invoices/submit` `{xdr}` | Recibe la tx firmada por el emisor (Freighter), verifica que sea solo `register_invoice` de este contrato y la envía |
+| `GET /config` | Contrato, token, red y clave pública del oráculo (nunca secretos) |
+
+Flujo de registro: la pyme sube el XML → `prepare` → firma con su wallet → `submit`. El oráculo solo firma si el validador acepta la factura.
+
+- **Validación SII simulada:** `MockSiiValidator` implementa la interfaz `InvoiceValidator`. Roadmap: `SiiValidator` real,
+  y otros países (México CFDI, Brasil NF-e) enchufando otra implementación.
+- **Deudor:** el oráculo traduce el RUT receptor a una dirección Stellar (`DebtorDirectory`; en la demo, un mapa fijo).
+- **Monto:** CLP → USDCt con `CLP_PER_USD` (por defecto 950, referencial). El vencimiento se toma como el fin de ese día en hora de Chile.
+- **XML de ejemplo:** `backend/samples/` (4 facturas con datos ficticios; RUT con dígito verificador válido).
+- El parser rechaza `DOCTYPE`/`ENTITY` (sin XXE) y XML de más de 1 MB.
 
 ## Despliegue en testnet
 ```bash
