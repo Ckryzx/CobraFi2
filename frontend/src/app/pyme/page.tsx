@@ -21,7 +21,7 @@ const SAMPLES = [
 
 function StepTitle({ n, children }: { n: number; children: ReactNode }) {
   return (
-    <h2 className="flex items-center gap-3 text-base font-semibold">
+    <h2 className="flex items-center gap-3 text-2xl">
       <span className="grid h-7 w-7 place-items-center rounded-full bg-brand/15 text-sm font-bold text-brand-soft">{n}</span>
       {children}
     </h2>
@@ -100,7 +100,7 @@ export default function PymePage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Pyme: financia tu factura</h1>
+        <h1 className="text-5xl">Pyme: financia tu factura</h1>
         <p className="mt-1 text-sm text-muted">Sube el XML de tu factura electrónica (DTE tipo 33) y recibe el dinero al instante.</p>
       </div>
 
@@ -159,7 +159,7 @@ export default function PymePage() {
                   label="Validación SII (simulada)"
                   value={
                     parsed.validation.valid ? (
-                      <span className="inline-flex items-center gap-1.5 text-brand-soft"><CheckCircle2 className="h-4 w-4" aria-hidden /> Válida</span>
+                      <span className="inline-flex items-center gap-1.5 text-positive"><CheckCircle2 className="h-4 w-4" aria-hidden /> Válida</span>
                     ) : (
                       <span className="inline-flex items-center gap-1.5 text-danger"><XCircle className="h-4 w-4" aria-hidden /> {parsed.validation.reason ?? "No válida"}</span>
                     )
@@ -169,7 +169,7 @@ export default function PymePage() {
                   label="Deudor en directorio"
                   value={
                     parsed.debtorFound ? (
-                      <span className="inline-flex items-center gap-1.5 text-brand-soft"><CheckCircle2 className="h-4 w-4" aria-hidden /> Sí</span>
+                      <span className="inline-flex items-center gap-1.5 text-positive"><CheckCircle2 className="h-4 w-4" aria-hidden /> Sí</span>
                     ) : (
                       <span className="inline-flex items-center gap-1.5 text-danger"><XCircle className="h-4 w-4" aria-hidden /> No registrado</span>
                     )
@@ -189,9 +189,9 @@ export default function PymePage() {
                 <input type="range" min={100} max={2000} step={50} value={bps} onChange={(e) => setBps(Number(e.target.value))} className="mt-3 w-full cursor-pointer" />
               </label>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                <Field label="Recibes hoy" accent="brand" value={<span className="text-xl font-bold">{formatUsdct(receive, code)}</span>} />
+                <Field label="Recibes hoy" accent="brand" value={<span className="font-display text-3xl">{formatUsdct(receive, code)}</span>} />
                 <Field label="Costo del adelanto" value={formatUsdct(face - receive, code)} />
-                <Field label="Rend. anual para el inversionista" accent="gold" value={formatPercent(annualizedYield(face, bps, parsed.dueDate))} />
+                <Field label="Rend. anual para el inversionista" accent="positive" value={formatPercent(annualizedYield(face, bps, parsed.dueDate))} />
               </div>
               {address ? (
                 <Button onClick={register} disabled={!!busy}>

@@ -17,9 +17,9 @@ export function Card({ children, className = "" }: { children: ReactNode; classN
 }
 
 const STATUS_STYLE: Record<Invoice["status"], string> = {
-  Registered: "bg-gold/15 text-gold ring-gold/30",
-  Funded: "bg-info/15 text-info ring-info/30",
-  Repaid: "bg-brand/15 text-brand-soft ring-brand/30",
+  Registered: "bg-brand/15 text-brand-soft ring-brand/30",
+  Funded: "bg-ivory/10 text-ivory ring-ivory/30",
+  Repaid: "bg-positive/15 text-positive ring-positive/30",
   Defaulted: "bg-danger/15 text-danger ring-danger/30",
 };
 
@@ -37,7 +37,7 @@ const button = cva(
   {
     variants: {
       variant: {
-        primary: "bg-brand text-brand-ink shadow-[0_0_24px_rgb(16_185_129/0.25)] hover:bg-brand-soft",
+        primary: "bg-brand text-brand-ink shadow-[0_0_24px_rgb(245_158_11/0.25)] hover:bg-brand-soft",
         secondary: "border border-line bg-white/5 text-ink hover:bg-white/10",
       },
     },
@@ -64,9 +64,9 @@ export function Button({ children, variant, className, type = "button", disabled
 
 export function Alert({ kind, children }: { kind: "error" | "ok" | "info"; children: ReactNode }) {
   const style = {
-    error: "border-danger/30 bg-danger/10 text-rose-200",
-    ok: "border-brand/30 bg-brand/10 text-emerald-200",
-    info: "border-info/30 bg-info/10 text-blue-200",
+    error: "border-danger/30 bg-danger/10 text-red-200",
+    ok: "border-positive/30 bg-positive/10 text-positive",
+    info: "border-ivory/25 bg-ivory/10 text-ivory",
   }[kind];
   const Icon = { error: AlertTriangle, ok: CheckCircle2, info: Info }[kind];
   return (
@@ -82,11 +82,11 @@ export function Alert({ kind, children }: { kind: "error" | "ok" | "info"; child
   );
 }
 
-export function Field({ label, value, accent }: { label: string; value: ReactNode; accent?: "gold" | "brand" }) {
+export function Field({ label, value, accent }: { label: string; value: ReactNode; accent?: "positive" | "brand" }) {
   return (
     <div>
       <dt className="text-[11px] font-medium uppercase tracking-wider text-muted">{label}</dt>
-      <dd className={cn("mt-1 break-words text-sm font-medium", accent === "gold" && "text-gold", accent === "brand" && "text-brand-soft")}>{value}</dd>
+      <dd className={cn("mt-1 break-words text-sm font-medium", accent === "positive" && "text-positive", accent === "brand" && "text-brand-soft")}>{value}</dd>
     </div>
   );
 }
@@ -125,7 +125,7 @@ export function EmptyState({ children }: { children: ReactNode }) {
 
 export function SectionTitle({ children, count }: { children: ReactNode; count?: number }) {
   return (
-    <h2 className="flex items-center gap-2 text-lg font-semibold">
+    <h2 className="flex items-center gap-2 text-3xl">
       {children}
       {count !== undefined && <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs font-medium text-muted">{count}</span>}
     </h2>

@@ -38,7 +38,7 @@ export default function DeudorPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Deudor: facturas por pagar</h1>
+        <h1 className="text-5xl">Deudor: facturas por pagar</h1>
         <p className="mt-1 text-sm text-muted">El pago va directo al inversionista que financió la factura.</p>
       </div>
 

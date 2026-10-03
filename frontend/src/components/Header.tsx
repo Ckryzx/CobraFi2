@@ -22,15 +22,15 @@ export function Header() {
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-bg/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-5 gap-y-2 px-4 py-3">
-        <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-soft to-brand text-brand-ink shadow-[0_0_18px_rgb(16_185_129/0.4)]">
+        <Link href="/" className="flex items-center gap-2 text-xl tracking-tight">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-soft to-brand text-brand-ink shadow-[0_0_18px_rgb(245_158_11/0.4)]">
             <Landmark className="h-4 w-4" aria-hidden />
           </span>
-          <span>
+          <span className="font-display text-2xl">
             Cobra<span className="text-brand-soft">Fi</span>
           </span>
         </Link>
-        <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-gold ring-1 ring-inset ring-gold/30">Testnet</span>
+        <span className="rounded-full bg-brand/15 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-brand-soft ring-1 ring-inset ring-brand/30">Testnet</span>
 
         <nav className="relative flex gap-1 text-sm" aria-label="Principal">
           {NAV.map((n) => {

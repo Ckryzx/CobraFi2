@@ -69,7 +69,7 @@ export function InvoiceCard({ invoice, actions }: { invoice: Invoice; actions?: 
           <p className="text-xs text-muted">
             Factura #{invoice.id} · hash <span className="font-mono">{shortHash(invoice.invoiceHash, 6)}</span>
           </p>
-          <p className="mt-1 text-3xl font-bold tracking-tight">{formatUsdct(invoice.faceValue, code)}</p>
+          <p className="font-display mt-1 text-4xl">{formatUsdct(invoice.faceValue, code)}</p>
           {clp !== null && <p className="text-xs text-muted">≈ {formatClp(clp)}</p>}
         </div>
         <div className="flex flex-col items-end gap-2">
@@ -84,7 +84,7 @@ export function InvoiceCard({ invoice, actions }: { invoice: Invoice; actions?: 
         <Field label="Precio de compra" value={formatUsdct(price, code)} />
         <Field
           label="Rend. anualizado"
-          accent={invoice.status === "Registered" ? "gold" : undefined}
+          accent={invoice.status === "Registered" ? "positive" : undefined}
           value={
             invoice.status === "Registered" ? (
               <span className="inline-flex items-center gap-1">

@@ -47,7 +47,7 @@ export default function InversionistaPage() {
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Inversionista: marketplace de facturas</h1>
+          <h1 className="text-5xl">Inversionista: marketplace de facturas</h1>
           <p className="mt-1 text-sm text-muted">Compra facturas con descuento y cobra el valor completo al vencimiento.</p>
         </div>
         <Button variant="secondary" onClick={refresh} disabled={loading}>

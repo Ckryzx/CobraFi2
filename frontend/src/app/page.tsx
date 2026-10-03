@@ -35,7 +35,7 @@ function Stat({ label, children }: { label: string; children: React.ReactNode })
   return (
     <div className="rounded-2xl border border-line bg-surface/70 px-5 py-4 backdrop-blur-md">
       <p className="text-[11px] font-medium uppercase tracking-wider text-muted">{label}</p>
-      <p className="mt-1 text-2xl font-bold tracking-tight">{children}</p>
+      <p className="font-display mt-1 text-4xl">{children}</p>
     </div>
   );
 }
@@ -55,14 +55,14 @@ export default function Home() {
           <motion.span variants={item} className="inline-flex items-center gap-2 rounded-full border border-line bg-white/5 px-3 py-1 text-xs font-medium text-muted">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-soft" /> Factoring sobre Stellar · Soroban
           </motion.span>
-          <motion.h1 variants={item} className="text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">
-            Cobra tus facturas hoy, <span className="bg-gradient-to-r from-brand-soft to-gold bg-clip-text text-transparent">no en 90 días.</span>
+          <motion.h1 variants={item} className="text-5xl leading-[1.04] sm:text-7xl">
+            Cobra tus facturas hoy, <span className="bg-gradient-to-r from-brand-soft to-ivory bg-clip-text text-transparent">no en 90 días.</span>
           </motion.h1>
           <motion.p variants={item} className="max-w-xl text-base leading-relaxed text-muted">
             CobraFi tokeniza facturas electrónicas chilenas (DTE) en Stellar. La pyme recibe financiamiento inmediato, el inversionista gana el descuento y el pago al vencimiento se liquida por smart contract.
           </motion.p>
           <motion.div variants={item} className="flex flex-wrap gap-3">
-            <Link href="/pyme" className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-brand-ink shadow-[0_0_28px_rgb(16_185_129/0.3)] transition-colors hover:bg-brand-soft">
+            <Link href="/pyme" className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-brand-ink shadow-[0_0_28px_rgb(245_158_11/0.3)] transition-colors hover:bg-brand-soft">
               Financiar una factura <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
             <Link href="/inversionista" className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-line bg-white/5 px-5 py-3 text-sm font-semibold transition-colors hover:bg-white/10">
@@ -80,14 +80,14 @@ export default function Home() {
               <span className="rounded-full bg-brand/15 px-2 py-0.5 font-semibold text-brand-soft">Financiada</span>
             </div>
             <p className="mt-4 text-xs text-muted">Factura electrónica · valor</p>
-            <p className="text-4xl font-bold tracking-tight">4.000,00 <span className="text-lg text-muted">USDCt</span></p>
+            <p className="font-display text-6xl">4.000,00 <span className="font-sans text-lg text-muted">USDCt</span></p>
             <div className="mt-5 space-y-3 text-sm">
               <div className="flex justify-between"><span className="text-muted">La pyme recibe hoy</span><span className="font-semibold text-brand-soft">3.760,00 USDCt</span></div>
-              <div className="flex justify-between"><span className="text-muted">Rend. anualizado</span><span className="font-semibold text-gold">31,1%</span></div>
+              <div className="flex justify-between"><span className="text-muted">Rend. anualizado</span><span className="font-semibold text-positive">31,1%</span></div>
               <div className="flex justify-between"><span className="text-muted">Vence en</span><span className="font-semibold">75 días</span></div>
             </div>
             <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10">
-              <motion.div initial={{ width: 0 }} animate={{ width: "66%" }} transition={{ duration: 1.2, delay: 0.6 }} className="h-full rounded-full bg-gradient-to-r from-brand to-gold" />
+              <motion.div initial={{ width: 0 }} animate={{ width: "66%" }} transition={{ duration: 1.2, delay: 0.6 }} className="h-full rounded-full bg-gradient-to-r from-brand to-ivory" />
             </div>
           </motion.div>
         </motion.div>
@@ -117,7 +117,7 @@ export default function Home() {
               <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand/15 text-brand-soft transition-colors group-hover:bg-brand group-hover:text-brand-ink">
                 <r.icon className="h-5 w-5" aria-hidden />
               </span>
-              <h2 className="mt-4 text-lg font-bold">{r.title}</h2>
+              <h2 className="mt-4 text-3xl">{r.title}</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted">{r.text}</p>
               <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-soft">
                 Entrar <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
@@ -129,11 +129,11 @@ export default function Home() {
 
       {/* Cómo funciona */}
       <section className="space-y-6">
-        <h2 className="text-2xl font-bold tracking-tight">Cómo funciona</h2>
+        <h2 className="text-4xl">Cómo funciona</h2>
         <motion.ol variants={container} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s, i) => (
             <motion.li key={s.title} variants={item} className="relative rounded-2xl border border-line bg-surface/60 p-5">
-              <span className="absolute right-4 top-3 text-4xl font-bold text-white/5">{i + 1}</span>
+              <span className="absolute right-4 top-2 font-display text-5xl text-white/5">{i + 1}</span>
               <s.icon className="h-5 w-5 text-brand-soft" aria-hidden />
               <h3 className="mt-3 font-semibold">{s.title}</h3>
               <p className="mt-1 text-sm text-muted">{s.text}</p>
@@ -144,11 +144,11 @@ export default function Home() {
 
       {/* Por qué Stellar */}
       <section className="space-y-6">
-        <h2 className="text-2xl font-bold tracking-tight">Por qué blockchain, por qué Stellar</h2>
+        <h2 className="text-4xl">Por qué blockchain, por qué Stellar</h2>
         <motion.div variants={container} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }} className="grid gap-4 sm:grid-cols-2">
           {WHY.map((w) => (
             <motion.div key={w.title} variants={item} className="flex gap-4 rounded-2xl border border-line bg-surface/60 p-5">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gold/15 text-gold">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-ivory/10 text-ivory">
                 <w.icon className="h-5 w-5" aria-hidden />
               </span>
               <div>
