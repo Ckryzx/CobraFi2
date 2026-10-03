@@ -1,0 +1,32 @@
+# Blueprint de Render para el backend (oráculo). Crea el servicio con: New + → Blueprint → repo CobraFi2.
+# Los secretos NO van aquí: Render los pide al crear el servicio (sync: false).
+services:
+  - type: web
+    name: cobrafi-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: STELLAR_RPC_URL
+        value: https://soroban-testnet.stellar.org
+      - key: STELLAR_NETWORK_PASSPHRASE
+        value: Test SDF Network ; September 2015
+      - key: CONTRACT_ID
+        value: CC6HGJX6VYIWJ52SWVWJV62NBL2IEARRYNMWHBSUS55YCGUQYH2TBKYS
+      - key: TOKEN_CONTRACT_ID
+        value: CD6L6N2GFYYMYBEFQ54TK6GWEXNOUNI5432NJVFO5PGQVODOPMR6HP5T
+      - key: ASSET_CODE
+        value: USDCt
+      - key: ASSET_ISSUER
+        value: GAAKKEWKENJGFZXTU3MJQPVPB72IN2XFWETK7S6JSGWITBVTGR32SVVO
+      - key: DEBTOR_PUBLIC
+        value: GAL7Y5SFRUAMDMWOPDG3A5DUH2VL5GJYWL47B5OI5UFS22ERGN2STZVH
+      - key: ORACLE_SECRET
+        sync: false   # clave secreta de testnet del oráculo (pégala al crear el servicio)
+      - key: CORS_ORIGIN
+        sync: false   # URL del frontend en Vercel, ej. https://cobrafi.vercel.app
