@@ -1,14 +1,15 @@
 "use client";
 
+import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { useApp } from "@/lib/app-context";
 import { friendlyError, invokeAsSource } from "@/lib/contract";
 import { explorerTx } from "@/lib/format";
 import { InvoiceCard } from "@/components/InvoiceCard";
-import { Alert, Button, ConnectPrompt } from "@/components/ui";
+import { Alert, Button, ConnectPrompt, EmptyState, InvoiceSkeleton, SectionTitle } from "@/components/ui";
 
 export default function DeudorPage() {
-  const { address, connect, config, invoices, refresh, sign, dataError } = useApp();
+  const { address, connect, config, invoices, refresh, sign, dataError, loading } = useApp();
   const [busyId, setBusyId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [okTx, setOkTx] = useState<string | null>(null);
@@ -37,8 +38,8 @@ export default function DeudorPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Deudor: facturas por pagar</h1>
-        <p className="text-sm text-slate-600">El pago va directo al inversionista que financió la factura.</p>
+        <h1 className="text-3xl font-bold tracking-tight">Deudor: facturas por pagar</h1>
+        <p className="mt-1 text-sm text-muted">El pago va directo al inversionista que financió la factura.</p>
       </div>
 
       {!address && <ConnectPrompt onConnect={() => connect().catch((e) => setError(e.message))} />}
@@ -47,8 +48,8 @@ export default function DeudorPage() {
       {okTx && (
         <Alert kind="ok">
           ¡Pago realizado! La factura quedó saldada.{" "}
-          <a className="underline" href={explorerTx(okTx)} target="_blank" rel="noreferrer">
-            Ver transacción ↗
+          <a className="inline-flex items-center gap-1 underline" href={explorerTx(okTx)} target="_blank" rel="noreferrer">
+            Ver transacción <ExternalLink className="h-3 w-3" aria-hidden />
           </a>
         </Alert>
       )}
@@ -56,9 +57,11 @@ export default function DeudorPage() {
       {address && (
         <>
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold">Por pagar ({toPay.length})</h2>
-            {toPay.length === 0 ? (
-              <p className="text-sm text-slate-500">No tienes facturas pendientes con esta wallet.</p>
+            <SectionTitle count={toPay.length}>Por pagar</SectionTitle>
+            {loading && invoices.length === 0 ? (
+              <InvoiceSkeleton />
+            ) : toPay.length === 0 ? (
+              <EmptyState>No tienes facturas pendientes con esta wallet.</EmptyState>
             ) : (
               toPay.map((i) => (
                 <InvoiceCard
@@ -75,8 +78,8 @@ export default function DeudorPage() {
           </section>
           {waiting.length > 0 && (
             <section className="space-y-3">
-              <h2 className="text-lg font-semibold">Registradas, aún sin financiar ({waiting.length})</h2>
-              <p className="text-sm text-slate-500">Todavía no hay nada que pagar: se habilita cuando un inversionista las financie.</p>
+              <SectionTitle count={waiting.length}>Registradas, aún sin financiar</SectionTitle>
+              <p className="text-sm text-muted">Todavía no hay nada que pagar: se habilita cuando un inversionista las financie.</p>
               {waiting.map((i) => (
                 <InvoiceCard key={i.id} invoice={i} />
               ))}
@@ -84,7 +87,7 @@ export default function DeudorPage() {
           )}
           {history.length > 0 && (
             <section className="space-y-3">
-              <h2 className="text-lg font-semibold">Historial</h2>
+              <SectionTitle count={history.length}>Historial</SectionTitle>
               {history.map((i) => (
                 <InvoiceCard key={i.id} invoice={i} />
               ))}

@@ -1,15 +1,86 @@
 @import "tailwindcss";
 
+/* Sistema de diseño CobraFi: fintech oscuro, verde esmeralda (marca) + dorado (rendimientos). */
 @theme {
-  --color-brand-50: #ecfdf5;
-  --color-brand-100: #d1fae5;
-  --color-brand-500: #10b981;
-  --color-brand-600: #059669;
-  --color-brand-700: #047857;
-  --color-ink: #0f172a;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-bg: #070b14;
+  --color-surface: #0e1424;
+  --color-surface-2: #141c32;
+  --color-line: rgb(255 255 255 / 0.09);
+  --color-ink: #e8ecf4;
+  --color-muted: #94a0b8;
+  --color-brand: #10b981;
+  --color-brand-soft: #34d399;
+  --color-brand-ink: #04130d;
+  --color-gold: #f5b83d;
+  --color-danger: #fb7185;
+  --color-info: #60a5fa;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: #f8fafc;
+  background-color: var(--color-bg);
   color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  background-image:
+    radial-gradient(900px 500px at 15% -10%, rgb(16 185 129 / 0.16), transparent 60%),
+    radial-gradient(700px 420px at 95% 0%, rgb(245 184 61 / 0.08), transparent 60%),
+    linear-gradient(rgb(255 255 255 / 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.025) 1px, transparent 1px);
+  background-size: auto, auto, 44px 44px, 44px 44px;
+  background-attachment: fixed;
+}
+
+::selection {
+  background: rgb(16 185 129 / 0.35);
+}
+
+/* Foco visible para teclado */
+:focus-visible {
+  outline: 2px solid var(--color-brand-soft);
+  outline-offset: 2px;
+}
+
+/* Skeleton */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgb(255 255 255 / 0.06);
+  border-radius: 0.75rem;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.08), transparent);
+  animation: shimmer 1.4s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .skeleton::after {
+    animation: none;
+  }
+}
+
+input[type="range"] {
+  accent-color: var(--color-brand);
 }

@@ -1,11 +1,12 @@
 "use client";
 
+import { ExternalLink, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { useApp } from "@/lib/app-context";
 import { friendlyError, invokeAsSource } from "@/lib/contract";
 import { explorerTx, formatUsdct, fundingAmount } from "@/lib/format";
 import { InvoiceCard } from "@/components/InvoiceCard";
-import { Alert, Button, ConnectPrompt } from "@/components/ui";
+import { Alert, Button, ConnectPrompt, EmptyState, InvoiceSkeleton, SectionTitle } from "@/components/ui";
 
 export default function InversionistaPage() {
   const { address, balance, connect, config, invoices, refresh, sign, loading, dataError } = useApp();
@@ -16,6 +17,7 @@ export default function InversionistaPage() {
   const now = Date.now() / 1000;
   const open = invoices.filter((i) => i.status === "Registered" && i.dueDate > now);
   const mine = invoices.filter((i) => i.investor === address);
+  const first = loading && invoices.length === 0;
 
   async function fund(id: number) {
     if (!address || !config) return;
@@ -43,12 +45,13 @@ export default function InversionistaPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-2">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Inversionista: marketplace de facturas</h1>
-          <p className="text-sm text-slate-600">Compra facturas con descuento y cobra el valor completo al vencimiento.</p>
+          <h1 className="text-3xl font-bold tracking-tight">Inversionista: marketplace de facturas</h1>
+          <p className="mt-1 text-sm text-muted">Compra facturas con descuento y cobra el valor completo al vencimiento.</p>
         </div>
         <Button variant="secondary" onClick={refresh} disabled={loading}>
+          <RefreshCw className={loading ? "h-4 w-4 animate-spin" : "h-4 w-4"} aria-hidden />
           {loading ? "Actualizando…" : "Actualizar"}
         </Button>
       </div>
@@ -59,16 +62,21 @@ export default function InversionistaPage() {
       {okTx && (
         <Alert kind="ok">
           ¡Factura financiada! El emisor ya recibió los fondos.{" "}
-          <a className="underline" href={explorerTx(okTx)} target="_blank" rel="noreferrer">
-            Ver transacción ↗
+          <a className="inline-flex items-center gap-1 underline" href={explorerTx(okTx)} target="_blank" rel="noreferrer">
+            Ver transacción <ExternalLink className="h-3 w-3" aria-hidden />
           </a>
         </Alert>
       )}
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Facturas abiertas ({open.length})</h2>
-        {open.length === 0 ? (
-          <p className="text-sm text-slate-500">No hay facturas abiertas por ahora.</p>
+        <SectionTitle count={open.length}>Facturas abiertas</SectionTitle>
+        {first ? (
+          <>
+            <InvoiceSkeleton />
+            <InvoiceSkeleton />
+          </>
+        ) : open.length === 0 ? (
+          <EmptyState>No hay facturas abiertas por ahora.</EmptyState>
         ) : (
           open.map((i) => (
             <InvoiceCard
@@ -86,12 +94,8 @@ export default function InversionistaPage() {
 
       {address && (
         <section className="space-y-3">
-          <h2 className="text-lg font-semibold">Mis inversiones ({mine.length})</h2>
-          {mine.length === 0 ? (
-            <p className="text-sm text-slate-500">Aún no has financiado facturas con esta wallet.</p>
-          ) : (
-            mine.map((i) => <InvoiceCard key={i.id} invoice={i} />)
-          )}
+          <SectionTitle count={mine.length}>Mis inversiones</SectionTitle>
+          {mine.length === 0 ? <EmptyState>Aún no has financiado facturas con esta wallet.</EmptyState> : mine.map((i) => <InvoiceCard key={i.id} invoice={i} />)}
         </section>
       )}
     </div>

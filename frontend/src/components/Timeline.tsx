@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { ExternalLink } from "lucide-react";
 import { explorerTx, formatUsdct, shortAddr } from "@/lib/format";
 import type { ContractEvent } from "@/lib/types";
 
@@ -26,27 +28,22 @@ function detail(ev: ContractEvent): string {
 
 export function Timeline({ events }: { events: ContractEvent[] }) {
   if (events.length === 0) {
-    return <p className="text-sm text-slate-500">Aún no hay eventos on-chain para esta factura.</p>;
+    return <p className="text-sm text-muted">Aún no hay eventos on-chain para esta factura.</p>;
   }
   const sorted = [...events].sort((a, b) => a.closedAt.localeCompare(b.closedAt));
   return (
-    <ol className="relative ml-2 space-y-3 border-l border-slate-200 pl-5">
-      {sorted.map((ev) => (
-        <li key={`${ev.txHash}-${ev.name}`} className="relative">
-          <span className="absolute -left-[26px] top-1 h-3 w-3 rounded-full bg-brand-500 ring-4 ring-white" />
+    <ol className="relative ml-2 space-y-4 border-l border-line pl-6">
+      {sorted.map((ev, i) => (
+        <motion.li key={`${ev.txHash}-${ev.name}`} className="relative" initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}>
+          <span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-brand ring-4 ring-surface" />
           <p className="text-sm font-semibold">{LABEL[ev.name] ?? ev.name}</p>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted">
             {new Date(ev.closedAt).toLocaleString("es-CL")} · {detail(ev)}
           </p>
-          <a
-            href={explorerTx(ev.txHash)}
-            target="_blank"
-            rel="noreferrer"
-            className="text-xs font-medium text-brand-700 underline"
-          >
-            Ver en stellar.expert ↗
+          <a href={explorerTx(ev.txHash)} target="_blank" rel="noreferrer" className="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-brand-soft hover:underline">
+            Ver en stellar.expert <ExternalLink className="h-3 w-3" aria-hidden />
           </a>
-        </li>
+        </motion.li>
       ))}
     </ol>
   );
