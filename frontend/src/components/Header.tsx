@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useApp } from "@/lib/app-context";
 import { explorerContract, formatUsdct, shortAddr } from "@/lib/format";
 import { cn } from "@/lib/cn";
+import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui";
 
 const NAV = [
@@ -37,7 +38,7 @@ export function Header() {
             const active = path.startsWith(n.href);
             return (
               <Link key={n.href} href={n.href} className={cn("relative rounded-lg px-3 py-1.5 font-medium transition-colors", active ? "text-ink" : "text-muted hover:text-ink")}>
-                {active && <motion.span layoutId="nav-pill" className="absolute inset-0 rounded-lg bg-white/10 ring-1 ring-inset ring-white/10" transition={{ type: "spring", stiffness: 380, damping: 32 }} />}
+                {active && <motion.span layoutId="nav-pill" className="absolute inset-0 rounded-lg bg-ink/10 ring-1 ring-inset ring-ink/10" transition={{ type: "spring", stiffness: 380, damping: 32 }} />}
                 <span className="relative">{n.label}</span>
               </Link>
             );
@@ -45,6 +46,7 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-3 text-sm">
+          <ThemeToggle />
           {config && (
             <a href={explorerContract(config.contractId)} target="_blank" rel="noreferrer" className="hidden items-center gap-1 text-xs text-muted transition-colors hover:text-ink sm:inline-flex">
               Contrato <ExternalLink className="h-3 w-3" aria-hidden />
@@ -52,7 +54,7 @@ export function Header() {
           )}
           {address ? (
             <>
-              <span className="rounded-xl border border-line bg-white/5 px-3 py-1.5 text-right leading-tight">
+              <span className="rounded-xl border border-line bg-ink/5 px-3 py-1.5 text-right leading-tight">
                 <span className="block font-mono text-xs">{shortAddr(address)}</span>
                 {balance !== null && <span className="block text-xs font-medium text-brand-soft">{formatUsdct(balance, config?.assetCode)}</span>}
               </span>

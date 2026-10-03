@@ -121,7 +121,7 @@ export default function PymePage() {
           }}
           className={cn(
             "flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed px-4 py-8 text-center transition-colors focus-within:border-brand-soft",
-            drag ? "border-brand bg-brand/10" : "border-line hover:border-brand/60 hover:bg-white/5",
+            drag ? "border-brand bg-brand/10" : "border-line hover:border-brand/60 hover:bg-ink/5",
           )}
         >
           <input type="file" accept=".xml,text/xml,application/xml" onChange={(e) => onFile(e.target.files?.[0])} className="sr-only" />
@@ -132,7 +132,7 @@ export default function PymePage() {
         <div className="text-xs text-muted">
           o prueba con un ejemplo:{" "}
           {SAMPLES.map(([f, label]) => (
-            <button key={f} onClick={() => loadSample(f)} className="mr-3 cursor-pointer underline decoration-white/30 underline-offset-2 transition-colors hover:text-brand-soft">
+            <button key={f} onClick={() => loadSample(f)} className="mr-3 cursor-pointer underline decoration-ink/30 underline-offset-2 transition-colors hover:text-brand-soft">
               {label}
             </button>
           ))}
@@ -186,7 +186,7 @@ export default function PymePage() {
               <StepTitle n={3}>Elige tu descuento</StepTitle>
               <label className="block text-sm">
                 Descuento: <strong className="text-brand-soft">{(bps / 100).toFixed(1)}%</strong>
-                <input type="range" min={100} max={2000} step={50} value={bps} onChange={(e) => setBps(Number(e.target.value))} className="mt-3 w-full cursor-pointer" />
+                <input type="range" min={100} max={2000} step={50} value={bps} onChange={(e) => setBps(Number(e.target.value))} style={{ "--p": `${((bps - 100) / 1900) * 100}%` } as React.CSSProperties} className="mt-3 w-full cursor-pointer" />
               </label>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                 <Field label="Recibes hoy" accent="brand" value={<span className="font-display text-3xl">{formatUsdct(receive, code)}</span>} />

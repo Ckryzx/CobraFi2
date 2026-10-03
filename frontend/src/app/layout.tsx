@@ -12,6 +12,9 @@ import { Providers } from "@/components/Providers";
 import { Header } from "@/components/Header";
 import "./globals.css";
 
+/** Aplica el tema guardado antes de pintar para evitar el parpadeo. */
+const THEME_INIT = `try{var t=localStorage.getItem("cobrafi.theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`;
+
 export const metadata: Metadata = {
   title: "CobraFi — Factoring de facturas sobre Stellar",
   description: "Financia tus facturas electrónicas al instante con stablecoins sobre Stellar/Soroban.",
@@ -19,7 +22,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="es">
+    <html lang="es" data-theme="dark" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
+      </head>
       <body className="min-h-screen antialiased">
         <Providers>
           <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-brand focus:px-3 focus:py-2 focus:text-brand-ink">

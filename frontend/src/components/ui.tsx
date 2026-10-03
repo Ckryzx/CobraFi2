@@ -10,7 +10,7 @@ import type { Invoice } from "@/lib/types";
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("rounded-2xl border border-line bg-surface/80 p-5 shadow-[0_8px_30px_rgb(0_0_0/0.25)] backdrop-blur-md", className)}>
+    <div className={cn("rounded-2xl border border-line bg-surface/80 p-5 shadow-card backdrop-blur-md", className)}>
       {children}
     </div>
   );
@@ -37,8 +37,8 @@ const button = cva(
   {
     variants: {
       variant: {
-        primary: "bg-brand text-brand-ink shadow-[0_0_24px_rgb(245_158_11/0.25)] hover:bg-brand-soft",
-        secondary: "border border-line bg-white/5 text-ink hover:bg-white/10",
+        primary: "bg-brand text-brand-ink shadow-[0_0_24px_rgb(245_158_11/0.25)] hover:brightness-110",
+        secondary: "border border-line bg-ink/5 text-ink hover:bg-ink/10",
       },
     },
     defaultVariants: { variant: "primary" },
@@ -64,7 +64,7 @@ export function Button({ children, variant, className, type = "button", disabled
 
 export function Alert({ kind, children }: { kind: "error" | "ok" | "info"; children: ReactNode }) {
   const style = {
-    error: "border-danger/30 bg-danger/10 text-red-200",
+    error: "border-danger/30 bg-danger/10 text-danger",
     ok: "border-positive/30 bg-positive/10 text-positive",
     info: "border-ivory/25 bg-ivory/10 text-ivory",
   }[kind];
@@ -127,7 +127,7 @@ export function SectionTitle({ children, count }: { children: ReactNode; count?:
   return (
     <h2 className="flex items-center gap-2 text-3xl">
       {children}
-      {count !== undefined && <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs font-medium text-muted">{count}</span>}
+      {count !== undefined && <span className="rounded-full bg-ink/10 px-2 py-0.5 text-xs font-medium text-muted">{count}</span>}
     </h2>
   );
 }

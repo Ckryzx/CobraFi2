@@ -52,7 +52,7 @@ export default function Home() {
       {/* Hero */}
       <section className="grid items-center gap-10 md:grid-cols-[1.15fr_0.85fr]">
         <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
-          <motion.span variants={item} className="inline-flex items-center gap-2 rounded-full border border-line bg-white/5 px-3 py-1 text-xs font-medium text-muted">
+          <motion.span variants={item} className="inline-flex items-center gap-2 rounded-full border border-line bg-ink/5 px-3 py-1 text-xs font-medium text-muted">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-soft" /> Factoring sobre Stellar · Soroban
           </motion.span>
           <motion.h1 variants={item} className="text-5xl leading-[1.04] sm:text-7xl">
@@ -62,10 +62,10 @@ export default function Home() {
             CobraFi tokeniza facturas electrónicas chilenas (DTE) en Stellar. La pyme recibe financiamiento inmediato, el inversionista gana el descuento y el pago al vencimiento se liquida por smart contract.
           </motion.p>
           <motion.div variants={item} className="flex flex-wrap gap-3">
-            <Link href="/pyme" className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-brand-ink shadow-[0_0_28px_rgb(245_158_11/0.3)] transition-colors hover:bg-brand-soft">
+            <Link href="/pyme" className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-brand-ink shadow-[0_0_28px_rgb(245_158_11/0.3)] transition-colors hover:brightness-110">
               Financiar una factura <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
-            <Link href="/inversionista" className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-line bg-white/5 px-5 py-3 text-sm font-semibold transition-colors hover:bg-white/10">
+            <Link href="/inversionista" className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-line bg-ink/5 px-5 py-3 text-sm font-semibold transition-colors hover:bg-ink/10">
               Ver el marketplace
             </Link>
           </motion.div>
@@ -73,8 +73,8 @@ export default function Home() {
 
         {/* Tarjeta ilustrativa */}
         <motion.div initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.2 }} className="relative">
-          <div className="absolute -inset-6 -z-10 rounded-[2rem] bg-brand/20 blur-3xl" aria-hidden />
-          <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="rounded-3xl border border-white/15 bg-gradient-to-br from-surface-2 to-surface p-6 shadow-2xl">
+          <div className="absolute -inset-3 -z-10 rounded-[2rem] bg-brand/20 blur-3xl" aria-hidden />
+          <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="rounded-3xl border border-ink/15 bg-gradient-to-br from-surface-2 to-surface p-6 shadow-card">
             <div className="flex items-center justify-between text-xs text-muted">
               <span>Ejemplo ilustrativo</span>
               <span className="rounded-full bg-brand/15 px-2 py-0.5 font-semibold text-brand-soft">Financiada</span>
@@ -86,7 +86,7 @@ export default function Home() {
               <div className="flex justify-between"><span className="text-muted">Rend. anualizado</span><span className="font-semibold text-positive">31,1%</span></div>
               <div className="flex justify-between"><span className="text-muted">Vence en</span><span className="font-semibold">75 días</span></div>
             </div>
-            <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10">
+            <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-ink/10">
               <motion.div initial={{ width: 0 }} animate={{ width: "66%" }} transition={{ duration: 1.2, delay: 0.6 }} className="h-full rounded-full bg-gradient-to-r from-brand to-ivory" />
             </div>
           </motion.div>
@@ -133,7 +133,7 @@ export default function Home() {
         <motion.ol variants={container} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s, i) => (
             <motion.li key={s.title} variants={item} className="relative rounded-2xl border border-line bg-surface/60 p-5">
-              <span className="absolute right-4 top-2 font-display text-5xl text-white/5">{i + 1}</span>
+              <span className="absolute right-4 top-2 font-display text-5xl text-ink/5">{i + 1}</span>
               <s.icon className="h-5 w-5 text-brand-soft" aria-hidden />
               <h3 className="mt-3 font-semibold">{s.title}</h3>
               <p className="mt-1 text-sm text-muted">{s.text}</p>

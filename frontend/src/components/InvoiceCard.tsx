@@ -35,9 +35,9 @@ function Stepper({ status }: { status: Invoice["status"] }) {
         const done = i <= current;
         return (
           <li key={s.key} className="flex items-center gap-2">
-            <span className={cn("h-2 w-2 rounded-full transition-colors", done ? (status === "Defaulted" && i === 1 ? "bg-danger" : "bg-brand-soft") : "bg-white/15")} />
+            <span className={cn("h-2 w-2 rounded-full transition-colors", done ? (status === "Defaulted" && i === 1 ? "bg-danger" : "bg-brand-soft") : "bg-ink/15")} />
             <span className={cn("text-[11px]", done ? "text-ink" : "text-muted")}>{s.label}</span>
-            {i < STEPS.length - 1 && <span className={cn("h-px w-6", i < current ? "bg-brand-soft/60" : "bg-white/15")} />}
+            {i < STEPS.length - 1 && <span className={cn("h-px w-6", i < current ? "bg-brand-soft/60" : "bg-ink/15")} />}
           </li>
         );
       })}
@@ -62,7 +62,7 @@ export function InvoiceCard({ invoice, actions }: { invoice: Invoice; actions?: 
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2 }}
       transition={{ duration: 0.3 }}
-      className="rounded-2xl border border-line bg-surface/80 p-5 shadow-[0_8px_30px_rgb(0_0_0/0.25)] backdrop-blur-md transition-colors hover:border-white/20"
+      className="rounded-2xl border border-line bg-surface/80 p-5 shadow-card backdrop-blur-md transition-colors hover:border-ink/20"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
